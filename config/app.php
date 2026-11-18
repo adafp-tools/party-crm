@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'blind_index_key' => env('BLIND_INDEX_KEY', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

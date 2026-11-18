@@ -146,3 +146,96 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
 
 </laravel-boost-guidelines>
+
+<party-crm-rules>
+
+# Party CRM — Project Rules
+
+## Critical Data Constraints (non-negotiable)
+
+- NEVER use real member data in development or staging — only factory-generated fakes.
+- ADAFP NEVER has access to any party's member data. The `platform_support` role may only view system health metrics, never member records.
+- DO NOT collect: national ID numbers, voter card numbers, religion, or ethnicity. If a party requests these fields, stop and ask Adil before proceeding.
+- APP_DEBUG must be `false` outside `local` environment. Never commit APP_DEBUG=true to production configs.
+- No CDN for CSS or JS in production — all assets compiled via Vite and served from `/public/build/`.
+
+## Infrastructure Architecture
+
+- Each party runs on its own server, database, and domain (physical separation for legal compliance).
+- Deploy to new servers only — NEVER to server.nadus.org.
+- Local development: SQLite (`:memory:` in tests, file-based otherwise).
+- Staging/production: MariaDB 13.0+.
+
+## Package Substitutions (from Laravel 13 compatibility audit)
+
+Document these when writing up work for Adil:
+
+| Specified | Installed | Reason |
+|---|---|---|
+| `laravel/fortify` | `pragmarx/google2fa-laravel 3.0.1` | Fortify requires `illuminate/support ^10-12`; no Laravel 13 release |
+| `livewire/livewire ^3` | `livewire/livewire 4.4.8` | All Livewire 3.x has open security advisories (PKSA-bgw4, PKSA-g5js, PKSA-9tny) |
+| `simplesoftwareio/simple-qrcode` | `endroid/qr-code 6.0.9` | `bacon/bacon-qr-code 3.1.1` (transitive) has an open security advisory |
+| `pestphp/pest` | `phpunit/phpunit 12.5.44` | `pest-plugin-laravel v5` requires PHP ^8.4; we run PHP 8.3 |
+
+## Running PHP on Windows (dev)
+
+PHP binary: `C:\Users\Adil\AppData\Local\Microsoft\WinGet\Packages\PHP.PHP.8.3_Microsoft.Winget.Source_8wekyb3d8bbwe\php.exe`
+
+Shorthand in Bash tools: `PHP="/c/Users/Adil/AppData/Local/Microsoft/WinGet/Packages/PHP.PHP.8.3_Microsoft.Winget.Source_8wekyb3d8bbwe/php.exe"`
+
+npm: `C:\Program Files\nodejs\npm.cmd` — requires `$env:PATH = "C:\Program Files\nodejs;$env:PATH"` in PowerShell, or use the Bash tool with the full path.
+
+MariaDB (admin step still pending): Register as Windows service:
+```powershell
+& "C:\Program Files\MariaDB 13.0\bin\mariadbd.exe" --install MariaDB
+Start-Service MariaDB
+```
+
+## Installing a New Party
+
+```bash
+php artisan party:install \
+  --party-name="Full Party Name" \
+  --short-name="ABBREV" \
+  --membership-prefix="PRE" \
+  --locales="en,fr" \
+  --default-locale="fr" \
+  --currency="XOF" \
+  --timezone="Africa/Dakar" \
+  --admin-name="Admin Name" \
+  --admin-email="admin@party.dev" \
+  --admin-password="SecurePass2026!" \
+  --demo \
+  --no-interaction
+```
+
+Use `--force` to re-configure an already-installed instance.
+
+## Role Hierarchy
+
+`national_admin` → `national_leadership` → `treasurer` / `communications_officer` / `regional_coordinator` → `branch_secretary` → `platform_support` (system-only, no member data)
+
+## i18n
+
+- Translation keys live in `lang/en.json` (key = English text), `lang/fr.json` (complete), `lang/am.json` (empty placeholder for Amharic).
+- Always use `__('Key text')` in Blade and PHP; never hardcode display strings.
+- Locale is set per-session via `POST /locale` route, falls back to `auth()->user()->locale`, then `config('app.locale')`.
+
+## Front-End
+
+- Tailwind v4 with CSS-first config in `resources/css/app.css` (`@theme { ... }`).
+- Alpine.js is bundled by Livewire 4 — do not import it separately.
+- Livewire 4 loaded via Vite bundle (`resources/js/app.js` imports from `vendor/livewire/livewire/dist/livewire.esm`).
+- Use `@livewireStyles` in `<head>` and `@vite(...)` for asset loading; no `@livewireScripts` (bundled via Vite).
+- All tests that render views must call `$this->withoutVite()` to avoid manifest errors.
+
+## Security Baseline
+
+- `SecurityHeadersMiddleware` sets CSP (no unsafe-inline), HSTS (on HTTPS), X-Frame-Options DENY, Referrer-Policy, Permissions-Policy.
+- Login is throttled to 5 attempts; uses `RateLimiter` facade.
+- 2FA (TOTP via Google2FA) is mandatory for roles: `national_admin`, `national_leadership`, `treasurer`, `communications_officer`, `regional_coordinator`.
+- `EnsureTwoFactorAuthenticated` middleware enforces setup before dashboard access; aliased as `two-factor`.
+- SESSION_LIFETIME=60 minutes.
+
+</party-crm-rules>
+
