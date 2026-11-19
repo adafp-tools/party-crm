@@ -14,6 +14,9 @@ class DashboardController extends Controller
             'dues' => $stats->duesSummaryThisMonth(),
             'upcomingEvents' => $stats->upcomingEventsCount(),
             'overdueTasks' => $stats->overdueTasksCount(),
+            'newMembersThisMonth' => $stats->newMembersThisMonth(),
+            'newMembersLastMonth' => $stats->newMembersLastMonth(),
+            'sparkline' => $stats->memberGrowthSparkline(),
         ]);
     }
 }

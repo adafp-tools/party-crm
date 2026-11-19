@@ -109,4 +109,51 @@ class StatsService
     {
         return Task::query()->overdue()->count();
     }
+
+    /**
+     * Count of members whose records were created in the current calendar month.
+     */
+    public function newMembersThisMonth(): int
+    {
+        return Member::query()
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->count();
+    }
+
+    /**
+     * Count of members whose records were created in the previous calendar month.
+     */
+    public function newMembersLastMonth(): int
+    {
+        $last = now()->subMonth();
+
+        return Member::query()
+            ->whereYear('created_at', $last->year)
+            ->whereMonth('created_at', $last->month)
+            ->count();
+    }
+
+    /**
+     * Monthly new-member counts for the past N months (oldest first).
+     *
+     * @return array<int, array{label: string, count: int}>
+     */
+    public function memberGrowthSparkline(int $months = 6): array
+    {
+        $result = [];
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $result[] = [
+                'label' => $date->format('M Y'),
+                'count' => Member::query()
+                    ->whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->count(),
+            ];
+        }
+
+        return $result;
+    }
 }
