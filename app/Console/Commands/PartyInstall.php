@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
@@ -166,7 +167,9 @@ class PartyInstall extends Command
         Setting::set('installed_at', now()->toIso8601String());
 
         // Create org levels
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         OrgLevel::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
         foreach ($levels as $depth => $level) {
             OrgLevel::create([
                 'depth' => $depth,
