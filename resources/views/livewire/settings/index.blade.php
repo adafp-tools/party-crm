@@ -210,4 +210,34 @@
         </div>
 
     </form>
+
+    {{-- About / Version --}}
+    @can('viewAuditLog')
+    <div class="card p-6 mt-6">
+        <h2 class="text-base font-semibold text-gray-900 mb-4">{{ __('About') }}</h2>
+        <dl class="space-y-3 text-sm">
+            <div class="flex gap-4">
+                <dt class="font-medium text-gray-500 w-40 flex-shrink-0">{{ __('Version') }}</dt>
+                <dd class="font-mono">{{ config('app.version', '1.0.0') }}</dd>
+            </div>
+            <div class="flex gap-4">
+                <dt class="font-medium text-gray-500 w-40 flex-shrink-0">{{ __('Installed') }}</dt>
+                <dd>{{ \App\Models\Setting::get('installed_at') ?? '—' }}</dd>
+            </div>
+            <div class="flex gap-4">
+                <dt class="font-medium text-gray-500 w-40 flex-shrink-0">{{ __('PHP') }}</dt>
+                <dd class="font-mono">{{ PHP_VERSION }}</dd>
+            </div>
+            <div class="flex gap-4">
+                <dt class="font-medium text-gray-500 w-40 flex-shrink-0">{{ __('Laravel') }}</dt>
+                <dd class="font-mono">{{ app()->version() }}</dd>
+            </div>
+            <div class="flex gap-4">
+                <dt class="font-medium text-gray-500 w-40 flex-shrink-0">{{ __('Health') }}</dt>
+                <dd><a href="{{ route('health') }}" target="_blank" class="text-primary-600 hover:underline font-mono text-xs">/health</a></dd>
+            </div>
+        </dl>
+    </div>
+    @endcan
+
 </div>

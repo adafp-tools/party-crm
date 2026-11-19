@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MemberCardController;
 use App\Http\Controllers\MemberVerifyController;
 use App\Livewire\Campaigns\Form as CampaignsForm;
@@ -16,6 +17,7 @@ use App\Livewire\Dues\Reconcile as DuesReconcile;
 use App\Livewire\Dues\RecordPayment as DuesRecordPayment;
 use App\Livewire\Events\Attendance as EventsAttendance;
 use App\Livewire\Events\Index as EventsIndex;
+use App\Livewire\Install\Wizard as InstallWizard;
 use App\Livewire\Members\Form as MembersForm;
 use App\Livewire\Members\ImportWizard as MembersImportWizard;
 use App\Livewire\Members\Index as MembersIndex;
@@ -115,6 +117,12 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
 
 // Privacy notice (public)
 Route::view('/privacy', 'privacy')->name('privacy');
+
+// Health check (public, unauthenticated)
+Route::get('/health', HealthController::class)->name('health');
+
+// Web installer — only while not installed
+Route::get('/install', InstallWizard::class)->name('install')->middleware('web');
 
 // Public join form
 Route::get('/{locale}/join', JoinForm::class)
