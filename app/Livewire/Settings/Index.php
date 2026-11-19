@@ -36,7 +36,7 @@ class Index extends Component
 
     public bool $localeAr = false;
 
-    public string $defaultLocale = 'fr';
+    public string $defaultLocale = 'en';
 
     public string $partyColor = '';
 
@@ -66,7 +66,7 @@ class Index extends Component
         $this->partyAddress = Setting::get('party_address', '');
         $this->partyPhone = Setting::get('party_phone', '');
         $this->partyEmail = Setting::get('party_email', '');
-        $this->defaultLocale = Setting::get('default_locale', 'fr');
+        $this->defaultLocale = Setting::get('default_locale', 'en');
         $this->currency = Setting::get('currency', '');
         $this->timezone = Setting::get('timezone', 'UTC');
         $this->installedAt = Setting::get('installed_at', '');
@@ -134,6 +134,10 @@ class Index extends Component
         Setting::set('timezone', $this->timezone);
         Setting::set('locales', implode(',', $locales));
         Setting::set('party_color', $this->partyColor);
+
+        cache()->forget('default_locale');
+        app()->setLocale($this->defaultLocale);
+        session(['locale' => $this->defaultLocale]);
 
         session()->flash('success', __('Settings saved.'));
     }

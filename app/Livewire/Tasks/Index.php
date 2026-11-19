@@ -30,7 +30,10 @@ class Index extends Component
             ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
             ->when($this->filterUnit, fn ($q) => $q->where('org_unit_id', $this->filterUnit))
             ->when($this->myTasksOnly, fn ($q) => $q->where('assignee_id', auth()->id()))
-            ->orderByRaw("CASE WHEN due_at IS NOT NULL AND due_at < datetime('now') AND status NOT IN ('done','cancelled') THEN 0 ELSE 1 END")
+            ->orderByRaw(
+                "CASE WHEN due_at IS NOT NULL AND due_at < ? AND status NOT IN ('done','cancelled') THEN 0 ELSE 1 END",
+                [now()->toDateTimeString()]
+            )
             ->orderBy('due_at')
             ->paginate(30);
     }

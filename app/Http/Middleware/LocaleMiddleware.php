@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,7 @@ class LocaleMiddleware
     {
         $locale = session('locale')
             ?? auth()->user()?->locale
+            ?? cache()->remember('default_locale', 3600, fn () => Setting::get('default_locale'))
             ?? config('app.locale', 'en');
 
         if (! in_array($locale, $this->supported, true)) {
