@@ -28,6 +28,9 @@ echo "[deploy] Building frontend assets…"
 npm ci --silent
 npm run build
 
+echo "[deploy] Building mobile PWA…"
+(cd mobile && npm ci --silent && npm run build)
+
 echo "[deploy] Entering maintenance mode…"
 ${ARTISAN} down --retry=5 --refresh=10 --render="errors::503" || true
 
