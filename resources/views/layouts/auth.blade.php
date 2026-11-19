@@ -53,6 +53,11 @@
                 @yield('content')
             </div>
 
+            {{-- Privacy link --}}
+            <div class="mt-4 text-center text-xs text-gray-400">
+                <a href="{{ route('privacy') }}" class="hover:text-gray-600">{{ __('Privacy Notice') }}</a>
+            </div>
+
             {{-- Locale switcher --}}
             <div class="mt-4 flex justify-center gap-3 text-xs text-gray-500">
                 @foreach(array_filter(explode(',', \App\Models\Setting::get('locales', 'en'))) as $locale)

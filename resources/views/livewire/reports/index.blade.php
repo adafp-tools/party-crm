@@ -1,11 +1,41 @@
-<div>
+<div x-data="{ exportOpen: false }">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold">{{ __('Reports') }}</h1>
-        @if (auth()->user()->hasRole('national_admin'))
-            <a href="{{ route('reports.audit-export') }}" class="btn-secondary text-sm">
-                ↓ {{ __('Download audit log (CSV)') }}
-            </a>
-        @endif
+        <div class="flex gap-2">
+            @can('exportMembers')
+                <button @click="exportOpen = true" class="btn-secondary text-sm">
+                    ↓ {{ __('Export members (CSV)') }}
+                </button>
+            @endcan
+            @can('viewAuditLog')
+                <a href="{{ route('reports.audit-log') }}" class="btn-secondary text-sm">
+                    {{ __('Audit log') }}
+                </a>
+            @endcan
+        </div>
+    </div>
+
+    {{-- Member export modal --}}
+    <div x-show="exportOpen" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+         @keydown.escape.window="exportOpen = false">
+        <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4" @click.stop>
+            <h2 class="text-lg font-semibold text-gray-900 mb-1">{{ __('Export members') }}</h2>
+            <p class="text-sm text-gray-500 mb-4">{{ __('This export will be logged. Please state why you need it.') }}</p>
+            <form method="POST" action="{{ route('exports.members') }}">
+                @csrf
+                <div>
+                    <label for="reason" class="form-label">{{ __('Reason for export') }} <span class="text-red-500">*</span></label>
+                    <textarea id="reason" name="reason" rows="3" required minlength="5"
+                              class="form-input mt-1 text-sm"
+                              placeholder="{{ __('e.g. Annual membership audit for national congress') }}"></textarea>
+                </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" @click="exportOpen = false" class="btn-secondary">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn-primary">{{ __('Download CSV') }}</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     {{-- Membership by status --}}

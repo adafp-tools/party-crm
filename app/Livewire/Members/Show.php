@@ -2,8 +2,11 @@
 
 namespace App\Livewire\Members;
 
+use App\Models\DataRequest;
 use App\Models\Member;
 use App\Services\MemberNumberService;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class Show extends Component
@@ -19,6 +22,10 @@ class Show extends Component
     public string $newInteractionDate = '';
 
     public string $approvalReason = '';
+
+    public string $newDataRequestType = 'access';
+
+    public string $newDataRequestNotes = '';
 
     public function mount(Member $member): void
     {
@@ -73,8 +80,37 @@ class Show extends Component
         session()->flash('success', __('Interaction logged.'));
     }
 
+    public function createDataRequest(): void
+    {
+        Gate::authorize('manageDataRequest');
+
+        $this->validate([
+            'newDataRequestType' => ['required', 'in:access,correction,deletion'],
+        ]);
+
+        DataRequest::create([
+            'member_id' => $this->member->id,
+            'type' => $this->newDataRequestType,
+            'notes' => $this->newDataRequestNotes ?: null,
+        ]);
+
+        $this->newDataRequestNotes = '';
+        session()->flash('success', __('Data request created.'));
+    }
+
+    /** @return Collection<int, DataRequest> */
+    public function getDataRequestsProperty(): Collection
+    {
+        return DataRequest::where('member_id', $this->member->id)
+            ->with('handler:id,name')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
     public function render()
     {
-        return view('livewire.members.show');
+        return view('livewire.members.show', [
+            'dataRequests' => $this->dataRequests,
+        ]);
     }
 }

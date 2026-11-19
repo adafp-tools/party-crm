@@ -69,6 +69,7 @@
         @if(\App\Models\Setting::get('party_website'))
             · <a href="{{ \App\Models\Setting::get('party_website') }}" class="hover:text-gray-600" target="_blank" rel="noopener">{{ \App\Models\Setting::get('party_website') }}</a>
         @endif
+        · <a href="{{ route('privacy') }}" class="hover:text-gray-600">{{ __('Privacy Notice') }}</a>
     </footer>
 
 </body>

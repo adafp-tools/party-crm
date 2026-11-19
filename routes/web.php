@@ -4,6 +4,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MemberCardController;
 use App\Http\Controllers\MemberVerifyController;
 use App\Livewire\Campaigns\Form as CampaignsForm;
@@ -20,6 +21,7 @@ use App\Livewire\Members\ImportWizard as MembersImportWizard;
 use App\Livewire\Members\Index as MembersIndex;
 use App\Livewire\Members\Show as MembersShow;
 use App\Livewire\Public\JoinForm;
+use App\Livewire\Reports\AuditViewer;
 use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\Structure\Tree as StructureTree;
@@ -85,7 +87,11 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
 
     // Reports
     Route::get('/reports', ReportsIndex::class)->name('reports.index');
-    Route::get('/reports/audit-log', [AuditLogController::class, 'export'])->name('reports.audit-export');
+    Route::get('/reports/audit-log', AuditViewer::class)->name('reports.audit-log');
+    Route::get('/reports/audit-export', [AuditLogController::class, 'export'])->name('reports.audit-export');
+
+    // Exports
+    Route::post('/exports/members', [ExportController::class, 'members'])->name('exports.members');
 
     // Settings
     Route::get('/settings', SettingsIndex::class)->name('settings.index');
@@ -106,6 +112,9 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     Route::get('/dues/reconcile', DuesReconcile::class)->name('dues.reconcile');
     Route::get('/dues/arrears', DuesArrears::class)->name('dues.arrears');
 });
+
+// Privacy notice (public)
+Route::view('/privacy', 'privacy')->name('privacy');
 
 // Public join form
 Route::get('/{locale}/join', JoinForm::class)

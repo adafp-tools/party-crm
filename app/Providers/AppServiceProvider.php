@@ -59,6 +59,11 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         DuesPayment::observe(DuesPaymentObserver::class);
 
+        // Simple gates
+        Gate::define('viewAuditLog', fn (User $user) => $user->hasRole('national_admin'));
+        Gate::define('exportMembers', fn (User $user) => $user->hasAnyRole(['national_admin', 'regional_coordinator']));
+        Gate::define('manageDataRequest', fn (User $user) => $user->hasRole('national_admin'));
+
         // Authorization policies
         Gate::policy(OrgUnit::class, OrgUnitPolicy::class);
         Gate::policy(Member::class, MemberPolicy::class);

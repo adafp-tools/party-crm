@@ -52,7 +52,7 @@
 
     {{-- Tabs --}}
     <div class="border-b mb-4" x-data="{ tab: @entangle('activeTab') }">
-        <div class="flex gap-4">
+        <div class="flex gap-4 flex-wrap">
             @foreach (['profile','history','interactions'] as $t)
                 <button @click="tab = '{{ $t }}'"
                     :class="tab === '{{ $t }}' ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold' : 'text-gray-500'"
@@ -60,6 +60,13 @@
                     {{ __(ucfirst($t)) }}
                 </button>
             @endforeach
+            @can('manageDataRequest')
+                <button @click="tab = 'data-requests'"
+                    :class="tab === 'data-requests' ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold' : 'text-gray-500'"
+                    class="py-2 px-1 text-sm transition">
+                    {{ __('Data requests') }}
+                </button>
+            @endcan
         </div>
     </div>
 
@@ -118,6 +125,59 @@
     @endif
 
     {{-- Interactions tab --}}
+    {{-- Data requests tab --}}
+    @can('manageDataRequest')
+    @if ($activeTab === 'data-requests')
+        <div class="bg-white rounded-lg shadow p-5 mb-4">
+            <h3 class="font-semibold mb-3">{{ __('New data request') }}</h3>
+            <div class="flex flex-wrap gap-3 items-end">
+                <div>
+                    <label class="label">{{ __('Type') }}</label>
+                    <select wire:model="newDataRequestType" class="input">
+                        <option value="access">{{ __('Access (data copy)') }}</option>
+                        <option value="correction">{{ __('Correction') }}</option>
+                        <option value="deletion">{{ __('Deletion') }}</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-48">
+                    <label class="label">{{ __('Notes') }}</label>
+                    <input wire:model="newDataRequestNotes" type="text" class="input w-full"
+                           placeholder="{{ __('Optional notes') }}" />
+                </div>
+                <button wire:click="createDataRequest" class="btn-primary">{{ __('Create') }}</button>
+            </div>
+            @error('newDataRequestType') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="th">{{ __('Date') }}</th>
+                        <th class="th">{{ __('Type') }}</th>
+                        <th class="th">{{ __('Status') }}</th>
+                        <th class="th">{{ __('Handled by') }}</th>
+                        <th class="th">{{ __('Notes') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse ($dataRequests as $dr)
+                        <tr>
+                            <td class="td text-sm">{{ $dr->created_at->format('Y-m-d') }}</td>
+                            <td class="td text-sm">{{ __(ucfirst($dr->type)) }}</td>
+                            <td class="td text-sm">{{ __(ucfirst($dr->status)) }}</td>
+                            <td class="td text-sm">{{ $dr->handler?->name ?? '—' }}</td>
+                            <td class="td text-sm">{{ $dr->notes ?? '—' }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="td text-center text-gray-500">{{ __('No data requests.') }}</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    @endif
+    @endcan
+
     @if ($activeTab === 'interactions')
         @can('update', $member)
             <div class="bg-white rounded-lg shadow p-4 mb-4">
