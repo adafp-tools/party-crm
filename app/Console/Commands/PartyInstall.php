@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\OrgLevel;
 use App\Models\Setting;
 use App\Models\User;
+use Database\Seeders\DemoSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -39,6 +40,21 @@ class PartyInstall extends Command
 
         $this->info('Party CRM — Installation');
         $this->newLine();
+
+        // Environment pre-flight checks
+        if (! config('app.key')) {
+            $this->error('APP_KEY is not set. Run: php artisan key:generate');
+
+            return self::FAILURE;
+        }
+
+        if (! config('app.blind_index_key')) {
+            $this->warn('BLIND_INDEX_KEY is not set in .env — member phone/email search will not work.');
+        }
+
+        if (config('app.debug') && ! app()->environment('local')) {
+            $this->warn('APP_DEBUG is true in a non-local environment. Set APP_DEBUG=false before going live.');
+        }
 
         $partyName = $this->resolveOption(
             option: 'party-name',
@@ -117,7 +133,8 @@ class PartyInstall extends Command
             return self::FAILURE;
         }
 
-        $isDemo = $this->option('demo') || $this->confirm('Mark as demo installation?', false);
+        $isDemo = $this->option('demo')
+            || ($this->input->isInteractive() && $this->confirm('Mark as demo installation?', false));
 
         $this->newLine();
         $this->info('Organisation structure levels');
@@ -190,6 +207,13 @@ class PartyInstall extends Command
         $this->newLine();
         $this->info('Installation complete.');
         $this->line('Sign in at <your-domain>/login with the admin credentials.');
+
+        if ($isDemo) {
+            $this->newLine();
+            $this->line('Seeding demo data…');
+            $this->call('db:seed', ['--class' => DemoSeeder::class, '--no-interaction' => true]);
+            $this->info('Demo data seeded.');
+        }
 
         return self::SUCCESS;
     }
