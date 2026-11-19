@@ -70,4 +70,64 @@
     .demo-banner {
         @apply bg-warning-500 text-white text-xs font-semibold text-center py-1 px-4;
     }
+
+    .input {
+        @apply block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm;
+    }
+
+    .th {
+        @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500;
+    }
+
+    .td {
+        @apply px-4 py-3 text-sm text-gray-900 align-middle;
+    }
+
+    .link {
+        @apply text-primary-600 hover:text-primary-700 hover:underline font-medium;
+    }
+
+    .alert-success {
+        @apply rounded-md bg-green-50 p-4 text-sm text-green-800 ring-1 ring-green-200;
+    }
+
+    .alert-error {
+        @apply rounded-md bg-red-50 p-4 text-sm text-red-800 ring-1 ring-red-200;
+    }
+
+    .checkbox {
+        @apply h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600;
+    }
+
+    .status-badge {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    }
+
+    .status-active {
+        @apply bg-green-100 text-green-700;
+    }
+
+    .status-applicant {
+        @apply bg-yellow-100 text-yellow-700;
+    }
+
+    .status-lapsed {
+        @apply bg-gray-100 text-gray-600;
+    }
+
+    .status-suspended {
+        @apply bg-orange-100 text-orange-700;
+    }
+
+    .status-expelled {
+        @apply bg-red-100 text-red-700;
+    }
+
+    .status-deceased {
+        @apply bg-gray-200 text-gray-500;
+    }
+
+    .status-resigned {
+        @apply bg-gray-100 text-gray-500;
+    }
 }
