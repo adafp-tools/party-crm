@@ -1,7 +1,6 @@
 import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
 import jsQR from 'jsqr';
 
-// Make jsQR globally available for the QR scanner Alpine component
 window.jsQR = jsQR;
 
-Livewire.start();
+// Livewire auto-starts Alpine on DOMContentLoaded when inject_assets is false

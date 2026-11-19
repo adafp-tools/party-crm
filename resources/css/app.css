@@ -64,7 +64,7 @@
     }
 
     .card {
-        @apply bg-white rounded-lg shadow-sm ring-1 ring-gray-200;
+        @apply bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6;
     }
 
     .demo-banner {
@@ -129,5 +129,33 @@
 
     .status-resigned {
         @apply bg-gray-100 text-gray-500;
+    }
+
+    .btn-sm {
+        @apply inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-semibold transition-colors;
+    }
+
+    .card-title {
+        @apply mb-4 pb-3 text-base font-semibold text-gray-900 border-b border-gray-100;
+    }
+
+    .label {
+        @apply block text-sm font-medium leading-6 text-gray-900 mb-1;
+    }
+
+    .input-error {
+        @apply ring-red-500 ring-2;
+    }
+
+    .error-text {
+        @apply mt-1 text-xs text-red-600;
+    }
+
+    .alert-warning {
+        @apply rounded-md bg-yellow-50 p-4 text-sm text-yellow-800 ring-1 ring-yellow-200;
+    }
+
+    .tab {
+        @apply inline-flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-colors;
     }
 }

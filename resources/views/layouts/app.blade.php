@@ -10,7 +10,7 @@
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-gray-50">
+<body class="h-full bg-gray-50" data-update-uri="{{ url(app('livewire')->getUpdateUri()) }}">
 
     @if(\App\Models\Setting::get('is_demo') === '1')
         <div class="demo-banner">{{ __('DEMO DATA') }} — {{ __('This is a demo installation. Data shown is fictitious.') }}</div>

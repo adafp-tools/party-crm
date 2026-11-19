@@ -31,15 +31,14 @@ class SecurityHeadersMiddleware
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self'{$nonceDirective}",
-            "style-src 'self'{$nonceDirective}",
-            "img-src 'self' data:",
-            "font-src 'self'",
+            "script-src 'self' 'unsafe-eval'{$nonceDirective}",
+            "style-src 'self' 'unsafe-inline' https://fonts.bunny.net{$nonceDirective}",
+            "img-src 'self' data: https:",
+            "font-src 'self' https://fonts.bunny.net https://cdn.jsdelivr.net",
             "connect-src 'self'",
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "form-action 'self'",
-            'upgrade-insecure-requests',
         ]);
 
         $response->headers->set('Content-Security-Policy', $csp);

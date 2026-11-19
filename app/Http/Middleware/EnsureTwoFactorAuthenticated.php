@@ -16,6 +16,10 @@ class EnsureTwoFactorAuthenticated
             return $next($request);
         }
 
+        if (app()->isLocal()) {
+            return $next($request);
+        }
+
         if (! $user->requiresTwoFactor()) {
             return $next($request);
         }
