@@ -15,18 +15,33 @@ class Device extends Model
         'user_id',
         'name',
         'platform',
+        'token_id',
         'last_synced_at',
+        'revoked_at',
+        'wipe_requested_at',
     ];
 
     protected function casts(): array
     {
         return [
             'last_synced_at' => 'datetime',
+            'revoked_at' => 'datetime',
+            'wipe_requested_at' => 'datetime',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isRevoked(): bool
+    {
+        return $this->revoked_at !== null;
+    }
+
+    public function needsWipe(): bool
+    {
+        return $this->wipe_requested_at !== null;
     }
 }

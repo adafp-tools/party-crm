@@ -121,6 +121,15 @@ Route::view('/privacy', 'privacy')->name('privacy');
 // Health check (public, unauthenticated)
 Route::get('/health', HealthController::class)->name('health');
 
+// PWA — serve index.html for all /app/* paths (Vue Router handles routing client-side)
+Route::get('/app/{any?}', function () {
+    $path = public_path('app/index.html');
+
+    return file_exists($path)
+        ? response()->file($path)
+        : response('PWA not built yet. Run: cd mobile && npm run build', 503);
+})->where('any', '.*')->name('pwa');
+
 // Web installer — only while not installed
 Route::get('/install', InstallWizard::class)->name('install')->middleware('web');
 
