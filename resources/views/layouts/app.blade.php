@@ -1,14 +1,32 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ config('locales.' . app()->getLocale() . '.dir', 'ltr') }}" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Models\Setting::get('party_name', config('app.name')) }} – @yield('title', __('Dashboard'))</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600|space-grotesk:500,600,700|noto-sans-ethiopic:400,500,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600|space-grotesk:500,600,700|noto-sans-ethiopic:400,500,700|noto-sans-arabic:400,500,700&display=swap" rel="stylesheet">
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php $partyColor = \App\Models\Setting::get('party_color', ''); @endphp
+    @if($partyColor)
+    <style>
+        :root {
+            --party-base: {{ $partyColor }};
+            --color-primary-50:  color-mix(in oklab, var(--party-base)  5%, white);
+            --color-primary-100: color-mix(in oklab, var(--party-base) 15%, white);
+            --color-primary-200: color-mix(in oklab, var(--party-base) 30%, white);
+            --color-primary-300: color-mix(in oklab, var(--party-base) 50%, white);
+            --color-primary-400: color-mix(in oklab, var(--party-base) 70%, white);
+            --color-primary-500: color-mix(in oklab, var(--party-base) 85%, white);
+            --color-primary-600: var(--party-base);
+            --color-primary-700: color-mix(in oklab, var(--party-base) 85%, black);
+            --color-primary-800: color-mix(in oklab, var(--party-base) 70%, black);
+            --color-primary-900: color-mix(in oklab, var(--party-base) 55%, black);
+        }
+    </style>
+    @endif
 </head>
 <body class="h-full bg-gray-50" data-update-uri="{{ url(app('livewire')->getUpdateUri()) }}">
 
@@ -31,7 +49,7 @@
             </div>
 
             {{-- Nav --}}
-            <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-2">
+            <nav class="flex-1 py-4 space-y-1 px-2">
                 @php
                     $navItems = [
                         ['route' => 'dashboard', 'label' => __('Dashboard'), 'icon' => 'squares-2x2'],

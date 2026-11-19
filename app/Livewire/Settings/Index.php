@@ -32,9 +32,13 @@ class Index extends Component
 
     public bool $localeFr = false;
 
-    public bool $localeAm = false;
+    public bool $localePt = false;
+
+    public bool $localeAr = false;
 
     public string $defaultLocale = 'fr';
+
+    public string $partyColor = '';
 
     public string $currency = '';
 
@@ -68,10 +72,13 @@ class Index extends Component
         $this->installedAt = Setting::get('installed_at', '');
         $this->isDemo = Setting::get('is_demo') === '1';
 
+        $this->partyColor = Setting::get('party_color', '');
+
         $enabledLocales = explode(',', Setting::get('locales', 'en'));
         $this->localeEn = in_array('en', $enabledLocales, true);
         $this->localeFr = in_array('fr', $enabledLocales, true);
-        $this->localeAm = in_array('am', $enabledLocales, true);
+        $this->localePt = in_array('pt', $enabledLocales, true);
+        $this->localeAr = in_array('ar', $enabledLocales, true);
     }
 
     public function save(): void
@@ -89,15 +96,17 @@ class Index extends Component
             'partyAddress' => ['nullable', 'string', 'max:500'],
             'partyPhone' => ['nullable', 'string', 'max:50'],
             'partyEmail' => ['nullable', 'email', 'max:200'],
-            'defaultLocale' => ['required', 'in:en,fr,am'],
+            'defaultLocale' => ['required', 'in:en,fr,pt,ar'],
             'currency' => ['required', 'string', 'max:10'],
             'timezone' => ['required', 'string', 'max:100'],
+            'partyColor' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/', 'max:7'],
         ]);
 
         $locales = array_values(array_filter([
             $this->localeEn ? 'en' : null,
             $this->localeFr ? 'fr' : null,
-            $this->localeAm ? 'am' : null,
+            $this->localePt ? 'pt' : null,
+            $this->localeAr ? 'ar' : null,
         ]));
 
         if (empty($locales)) {
@@ -124,6 +133,7 @@ class Index extends Component
         Setting::set('currency', $this->currency);
         Setting::set('timezone', $this->timezone);
         Setting::set('locales', implode(',', $locales));
+        Setting::set('party_color', $this->partyColor);
 
         session()->flash('success', __('Settings saved.'));
     }

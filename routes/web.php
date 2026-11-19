@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 
 // Locale switcher
 Route::post('locale', function (Request $request) {
-    $supported = ['en', 'fr', 'am'];
+    $supported = ['en', 'fr', 'pt', 'ar', 'am'];
     $locale = $request->string('locale')->toString();
     if (in_array($locale, $supported, true)) {
         session(['locale' => $locale]);

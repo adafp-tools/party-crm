@@ -120,8 +120,12 @@
                             <span class="text-sm">Français</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input wire:model="localeAm" type="checkbox" class="rounded border-gray-300" />
-                            <span class="text-sm">አማርኛ (Amharic)</span>
+                            <input wire:model="localePt" type="checkbox" class="rounded border-gray-300" />
+                            <span class="text-sm">Português</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input wire:model="localeAr" type="checkbox" class="rounded border-gray-300" />
+                            <span class="text-sm" dir="rtl">العربية</span>
                         </label>
                     </div>
                     @error('localeEn') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
@@ -133,9 +137,24 @@
                         class="form-input mt-1 @error('defaultLocale') ring-red-500 @enderror">
                         <option value="en">English</option>
                         <option value="fr">Français</option>
-                        <option value="am">አማርኛ (Amharic)</option>
+                        <option value="pt">Português</option>
+                        <option value="ar">العربية</option>
                     </select>
                     @error('defaultLocale') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="form-label">{{ __('Party Colour') }}</label>
+                    <div class="mt-1 flex items-center gap-3">
+                        <input wire:model="partyColor" type="color"
+                            class="h-9 w-16 cursor-pointer rounded-md border border-gray-300 p-0.5"
+                            value="{{ $partyColor ?: '#1a5c3a' }}" />
+                        <input wire:model="partyColor" type="text" maxlength="7"
+                            class="form-input @error('partyColor') ring-red-500 @enderror"
+                            placeholder="#1a5c3a" />
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">{{ __('Primary colour (hex code, e.g. #1a5c3a)') }}</p>
+                    @error('partyColor') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
 
                 <div>

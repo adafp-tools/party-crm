@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LocaleMiddleware
 {
-    protected array $supported = ['en', 'fr', 'am'];
+    protected array $supported = ['en', 'fr', 'pt', 'ar', 'am'];
 
     public function handle(Request $request, Closure $next): Response
     {
