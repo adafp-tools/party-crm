@@ -38,7 +38,8 @@
                         ['route' => 'dues.index', 'label' => __('Dues'), 'icon' => 'banknotes'],
                         ['route' => 'events.index', 'label' => __('Events'), 'icon' => 'calendar-days'],
                         ['route' => 'tasks.index', 'label' => __('Tasks'), 'icon' => 'check-circle'],
-                        ['route' => 'messages.index', 'label' => __('Messages'), 'icon' => 'envelope'],
+                        ['route' => 'campaigns.index', 'label' => __('Campaigns'), 'icon' => 'envelope'],
+                        ['route' => 'users.index', 'label' => __('Users'), 'icon' => 'users'],
                         ['route' => 'reports.index', 'label' => __('Reports'), 'icon' => 'chart-bar'],
                         ['route' => 'settings.index', 'label' => __('Settings'), 'icon' => 'cog-6-tooth'],
                     ];

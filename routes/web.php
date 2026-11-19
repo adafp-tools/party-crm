@@ -20,6 +20,7 @@ use App\Livewire\Members\ImportWizard as MembersImportWizard;
 use App\Livewire\Members\Index as MembersIndex;
 use App\Livewire\Members\Show as MembersShow;
 use App\Livewire\Reports\Index as ReportsIndex;
+use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\Structure\Tree as StructureTree;
 use App\Livewire\Tasks\Form as TasksForm;
 use App\Livewire\Tasks\Index as TasksIndex;
@@ -84,6 +85,9 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     // Reports
     Route::get('/reports', ReportsIndex::class)->name('reports.index');
     Route::get('/reports/audit-log', [AuditLogController::class, 'export'])->name('reports.audit-export');
+
+    // Settings
+    Route::get('/settings', SettingsIndex::class)->name('settings.index');
 
     // Dues redirect (keeps nav link working)
     Route::redirect('/dues', '/dues/plans')->name('dues.index');
