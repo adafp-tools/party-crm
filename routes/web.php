@@ -19,6 +19,7 @@ use App\Livewire\Members\Form as MembersForm;
 use App\Livewire\Members\ImportWizard as MembersImportWizard;
 use App\Livewire\Members\Index as MembersIndex;
 use App\Livewire\Members\Show as MembersShow;
+use App\Livewire\Public\JoinForm;
 use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Settings\Index as SettingsIndex;
 use App\Livewire\Structure\Tree as StructureTree;
@@ -105,6 +106,11 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     Route::get('/dues/reconcile', DuesReconcile::class)->name('dues.reconcile');
     Route::get('/dues/arrears', DuesArrears::class)->name('dues.arrears');
 });
+
+// Public join form
+Route::get('/{locale}/join', JoinForm::class)
+    ->name('join')
+    ->where('locale', '[a-z]{2}');
 
 // Public member verification (signed URL)
 Route::get('/{locale}/verify/{membership_no}', [MemberVerifyController::class, 'show'])

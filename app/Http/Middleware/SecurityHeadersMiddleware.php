@@ -29,9 +29,11 @@ class SecurityHeadersMiddleware
         $nonce = app()->has('csp-nonce') ? app('csp-nonce') : '';
         $nonceDirective = $nonce ? " 'nonce-{$nonce}'" : '';
 
+        $unsafeInline = app()->isLocal() ? " 'unsafe-inline'" : '';
+
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-eval'{$nonceDirective}",
+            "script-src 'self' 'unsafe-eval'{$unsafeInline}{$nonceDirective}",
             "style-src 'self' 'unsafe-inline' https://fonts.bunny.net{$nonceDirective}",
             "img-src 'self' data: https:",
             "font-src 'self' https://fonts.bunny.net https://cdn.jsdelivr.net",
