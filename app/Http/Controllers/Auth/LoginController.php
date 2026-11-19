@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,18 @@ class LoginController extends Controller
 
         if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey($request));
+            AuditLog::record('auth.login_failed');
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
+        // Block deactivated accounts even if credentials are correct
+        if (! Auth::user()->is_active) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey($request));
+            AuditLog::record('auth.login_blocked_inactive');
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
@@ -37,12 +50,14 @@ class LoginController extends Controller
 
         RateLimiter::clear($this->throttleKey($request));
         $request->session()->regenerate();
+        AuditLog::record('auth.login');
 
         return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request): RedirectResponse
     {
+        AuditLog::record('auth.logout');
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

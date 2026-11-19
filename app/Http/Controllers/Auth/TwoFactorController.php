@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -39,10 +40,13 @@ class TwoFactorController extends Controller
         );
 
         if (! $valid) {
+            AuditLog::record('auth.two_factor_failed');
+
             return back()->withErrors(['code' => __('Invalid authentication code.')]);
         }
 
         session(['two_factor_authenticated' => true]);
+        AuditLog::record('auth.two_factor_verified');
 
         return redirect()->intended(route('dashboard'));
     }
@@ -104,6 +108,7 @@ class TwoFactorController extends Controller
 
         $user->forceFill(['totp_confirmed_at' => now()])->save();
         session(['two_factor_authenticated' => true]);
+        AuditLog::record('auth.two_factor_enabled');
 
         return redirect()->route('dashboard')->with('success', __('Two-factor authentication enabled.'));
     }

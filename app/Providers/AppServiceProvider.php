@@ -14,6 +14,9 @@ use App\Models\Member;
 use App\Models\OrgUnit;
 use App\Models\Task;
 use App\Models\User;
+use App\Observers\DuesPaymentObserver;
+use App\Observers\MemberObserver;
+use App\Observers\UserObserver;
 use App\Policies\CampaignPolicy;
 use App\Policies\DuesPaymentPolicy;
 use App\Policies\DuesPlanPolicy;
@@ -28,6 +31,7 @@ use App\Services\MemberNumberService;
 use App\Services\StatsService;
 use App\Services\UnitScope;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +49,17 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Force HTTPS in production/staging (not local or test runners)
+        if (! app()->environment('local', 'testing')) {
+            URL::forceScheme('https');
+        }
+
+        // Model observers for audit trail
+        Member::observe(MemberObserver::class);
+        User::observe(UserObserver::class);
+        DuesPayment::observe(DuesPaymentObserver::class);
+
+        // Authorization policies
         Gate::policy(OrgUnit::class, OrgUnitPolicy::class);
         Gate::policy(Member::class, MemberPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
