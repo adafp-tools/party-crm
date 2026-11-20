@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Protected routes
-Route::middleware(['auth', 'two-factor'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/structure', StructureTree::class)->name('structure.index');
